@@ -1,0 +1,23 @@
+{
+  "name": "wordle-react",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcusmoller97/wordle-react.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marcusmoller97/wordle-react/issues"
+  },
+  "homepage": "https://github.com/marcusmoller97/wordle-react#readme",
+  "dependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
