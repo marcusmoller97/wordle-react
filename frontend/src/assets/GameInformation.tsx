@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Box, Typography, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import WorldeConfigForm from './GameSetupForm';
@@ -94,9 +94,9 @@ export default function WordInput() {
             </Typography>
             <GuessWord
               wordObject={{
-                changePage: true,
-                charAmount: 3,
-                uniqueLetters: true,
+                changePage: FormData ? FormData.changePage : false,
+                charAmount: FormData ? FormData.charAmount : 1,
+                uniqueLetters: FormData ? FormData.uniqueLetters : false,
               }}
             />
           </Box>
