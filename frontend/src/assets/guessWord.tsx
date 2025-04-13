@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-/*  declare module '../utilis/chooseWord.js' {
-   export function chooseWord(): string; // Adjust this according to your function's return type and parameters
- } */
+import InputWordGuess from './InputWordGuess';
 
 type Props = {
   wordObject: {
@@ -49,7 +47,8 @@ export default function GuessWord({ wordObject }: Props) {
 
   return (
     <>
-      <p>{word}</p>
+      {/* <p>{word}</p> */}
+      <InputWordGuess word={word} uniqueLetters={wordObject.uniqueLetters} />
     </>
   );
 }

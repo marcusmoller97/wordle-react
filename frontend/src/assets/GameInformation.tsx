@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Box, Typography, ThemeProvider } from '@mui/material';
-import { createTheme } from '@mui/material/styles';
+/* import { createTheme } from '@mui/material/styles'; */
+import theme from './GameTheme';
 import WorldeConfigForm from './GameSetupForm';
 import GuessWord from './guessWord';
 
@@ -19,15 +20,6 @@ export default function WordInput() {
     setPageChanged(true);
     setFormData(data);
   };
-
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: '#007FFF',
-        dark: '#0066CC',
-      },
-    },
-  });
 
   return (
     <>
@@ -75,7 +67,7 @@ export default function WordInput() {
           <Box
             sx={{
               maxWidth: 800,
-              minHeight: 800,
+              minHeight: 900,
               borderRadius: 1,
               margin: '5rem auto 5rem auto',
               bgcolor: 'primary.main',
@@ -87,7 +79,7 @@ export default function WordInput() {
                 fontFamily: 'monospace',
                 textAlign: 'center',
                 color: 'white',
-                paddingTop: '2rem',
+                pt: '2rem'
               }}
             >
               Gissa på ditt ord:

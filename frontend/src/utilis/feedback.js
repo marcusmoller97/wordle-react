@@ -6,7 +6,7 @@
  */
 export default function getFeedback (guess, word) {
 
-    if (guess.length !== word.length) {
+    if (guess.length > word.length) {
         console.log('Du har skrivit för lång gissning');
         return [];
     }
