@@ -24,7 +24,7 @@ export default function Row({ guessLength, currentGuess, feedback }: rowProps) {
         return 'primary.main';
     }
   };
-
+  console.log(feedback)
   return (
     <>
       {feedback === null ? (

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { TextField, Button, Box, Alert } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import getFeedback from '../utilis/feedback.js';
-import SubmitForm from './submitForm.js';
+import SubmitForm from './SubmitForm';
 import Row from './Row';
 
 type InputWordGuessProps = {
@@ -16,7 +16,6 @@ type FeedbackItem = {
 };
 
 export default function InputWordGuess({ word, uniqueLetters }: InputWordGuessProps) {
-  // TODO: Vid submit ska en ruta med dinga gissade ord ploppa upp med olika färger beroende på gissning.
   const [showAlert, setShowAlert] = useState(false);
   const [guessWord, setGuess] = useState('');
   const [guesses, setGuesses] = useState(0);
@@ -24,6 +23,7 @@ export default function InputWordGuess({ word, uniqueLetters }: InputWordGuessPr
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(true);
   const [feedbackList, setFeedbackList] = useState<FeedbackItem[] | null>(null);
+
   // for timing the game
   useEffect(() => {
     let timer: number;
@@ -52,7 +52,6 @@ export default function InputWordGuess({ word, uniqueLetters }: InputWordGuessPr
       setFinished(true);
       setIsRunning(false);
     } else {
-      /* setGuess(''); */
       setGuesses(numberGuesses);
     }
   };
@@ -62,9 +61,9 @@ export default function InputWordGuess({ word, uniqueLetters }: InputWordGuessPr
     const guess = e.target.value;
     console.log(guess);
     if (guess.length > word.length || /[^a-zA-Z]/.test(guess)) {
-      setShowAlert(true)
+      setShowAlert(true);
       setTimeout(() => {
-        setShowAlert(false)
+        setShowAlert(false);
       }, 800);
       return;
     }
@@ -104,7 +103,8 @@ export default function InputWordGuess({ word, uniqueLetters }: InputWordGuessPr
             icon={<ErrorOutlineIcon fontSize="inherit" />}
             severity="error"
           >
-            Gissning måste vara {word.length} tecken lång!<br />
+            Gissning måste vara {word.length} tecken lång!
+            <br />
             Inga tecken annat än a-z får användas!
           </Alert>
           <TextField

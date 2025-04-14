@@ -34,30 +34,32 @@ export default function getFeedback (guess, word) {
     const feedback = [];
     const letterCount = {};
 
-
     // count occurence of words and store them in a object.
     for (let ele of word) {
         ele = ele.toUpperCase();
-        letterCount[ele] = (letterCount[ele.toUpperCase] || 0) + 1;
+        letterCount[ele] = (letterCount[ele] || 0) + 1;
     }
 
     // find correct chars or incorrect chars
-    for (const val in guess) {
-        if (guess[val].toUpperCase() === word[val].toUpperCase()) {
-            feedback.push({ 'letter': guess[val].toUpperCase(), 'result': 'correct' });
-            letterCount[guess[val].toUpperCase()]--; //remove from char counter if value is correct.
+    for (let i = 0; i < guess.length; i++) {
+        const guessedLetter = guess[i].toUpperCase();
+        const correctLetter = word[i].toUpperCase();
+
+        if (guessedLetter === correctLetter) {
+            feedback.push({ 'letter': guessedLetter, 'result': 'correct' });
+            letterCount[guessedLetter]--;
         } else {
-            feedback.push({ 'letter': guess[val].toUpperCase(), 'result': 'incorrect' });
+            feedback.push({ 'letter': guessedLetter, 'result': 'incorrect' });
         }
     }
 
     // find misplaced chars
-    for (const i in guess) {
-        if (feedback[i].letter === word[i].toUpperCase()) {
-            continue;
-        } else if (letterCount[guess[i].toUpperCase()] > 0) {
+    for (let i = 0; i < guess.length; i++) {
+        const guessedLetter = guess[i].toUpperCase();
+
+        if (feedback[i].result === 'incorrect' && letterCount[guessedLetter] > 0) {
             feedback[i].result = 'misplaced';
-            letterCount[guess[i]]--;
+            letterCount[guessedLetter]--;
         }
     }
 
