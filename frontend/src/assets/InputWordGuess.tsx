@@ -3,24 +3,28 @@ import { TextField, Button, Box, Alert } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import getFeedback from '../utilis/feedback.js';
 import SubmitForm from './submitForm.js';
+import Row from './Row';
 
 type InputWordGuessProps = {
   word: string;
   uniqueLetters: boolean;
 };
 
+type FeedbackItem = {
+  letter: string;
+  result: 'correct' | 'incorrect' | 'misplaced';
+};
+
 export default function InputWordGuess({ word, uniqueLetters }: InputWordGuessProps) {
-  // hantera längden på ordet gissningar som överskrider ordet ska ges ett fel.
-  // det är bara a-z som får skrivas in alla andra tecken ska väcka ett fel.
   // TODO: Vid submit ska en ruta med dinga gissade ord ploppa upp med olika färger beroende på gissning.
-  //
-  /* const [feedback, setFeedback] = useState([]); */
+  const [showAlert, setShowAlert] = useState(false);
   const [guessWord, setGuess] = useState('');
   const [guesses, setGuesses] = useState(0);
   const [finished, setFinished] = useState(false);
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(true);
-
+  const [feedbackList, setFeedbackList] = useState<FeedbackItem[] | null>(null);
+  // for timing the game
   useEffect(() => {
     let timer: number;
     if (isRunning === true) {
@@ -30,39 +34,45 @@ export default function InputWordGuess({ word, uniqueLetters }: InputWordGuessPr
     return () => clearInterval(timer);
   }, [isRunning]);
 
+  // handle form when submitted
   const controllAnswer = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
 
     const getGuessFeedback = getFeedback(guessWord, word);
+    setFeedbackList(getGuessFeedback);
+
     const isCorrect = getGuessFeedback.every((item: { letter: string; result: string }) => {
       return item.result === 'correct';
     });
 
     const numberGuesses = guesses + 1;
 
-    if (isCorrect === true ) {
+    if (isCorrect === true) {
       setGuesses(numberGuesses);
       setFinished(true);
       setIsRunning(false);
     } else {
+      /* setGuess(''); */
       setGuesses(numberGuesses);
     }
   };
 
+  // to handle input when typing
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const guess = e.target.value;
-    console.log(guess)
+    console.log(guess);
     if (guess.length > word.length || /[^a-zA-Z]/.test(guess)) {
-      const alert = document.querySelector('.alert') as HTMLElement;
-      alert.style.display = 'flex';
+      setShowAlert(true)
       setTimeout(() => {
-        alert.style.display = 'none';
+        setShowAlert(false)
       }, 800);
-      return; // Avsluta funktionen och skriv inte in mer
+      return;
     }
-
     setGuess(guess);
   };
+
+  //to get row component for guess.
+
   return (
     <>
       {finished !== true ? (
@@ -79,10 +89,11 @@ export default function InputWordGuess({ word, uniqueLetters }: InputWordGuessPr
             backgroundColor: '#FFF',
           }}
         >
+          <Row guessLength={word.length} currentGuess={guessWord} feedback={feedbackList} />
           <Alert
             className="alert"
             sx={{
-              display: 'none',
+              display: showAlert ? 'flex' : 'none',
               alignItems: 'center',
               justifyContent: 'center',
               textAlign: 'center',
@@ -93,7 +104,8 @@ export default function InputWordGuess({ word, uniqueLetters }: InputWordGuessPr
             icon={<ErrorOutlineIcon fontSize="inherit" />}
             severity="error"
           >
-            Gissning måste vara {word.length} tecken lång
+            Gissning måste vara {word.length} tecken lång!<br />
+            Inga tecken annat än a-z får användas!
           </Alert>
           <TextField
             value={guessWord}
