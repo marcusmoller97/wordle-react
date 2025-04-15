@@ -4,15 +4,33 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 import chooseWord from '../frontend/src/utilis/chooseWord.js';
+import Highscore from './modals/highScore.js';
+import mongoose from 'mongoose';
 
-const PORT = process.env.PORT || 5080;
+// setup express
 const app = express();
+const PORT = process.env.PORT || 5080;
+
+// connect to database
+mongoose.connect('mongodb://localhost:27017/scoreboard')
+    .then(() => {
+        console.log('Database is connected');
+    })
+    .catch(err => {
+        console.error('Database connection error:', err);
+    });
+
+// Json data middleware
+app.use(express.json());
+
+// enable cors
 const corsOptions = {
     origin: ['http://localhost:5173'],
 };
 
 app.use(cors(corsOptions));
 
+// paths
 app.get('/wordlist/:wordLength/:uniqueLetters', async (req, res) => {
     const length = Number(req.params.wordLength);
     const uniqueLetters = (req.params.uniqueLetters === 'true' ? true : false);
@@ -28,16 +46,21 @@ app.get('/wordlist/:wordLength/:uniqueLetters', async (req, res) => {
     }
 });
 
-/* // Static files
-app.use(express.static(path.resolve(__dirname, '../frontend/dist')));
-app.use(express.static(path.join(__dirname, 'public')));
+app.post('/api/scoreboard', async (req, res) => {
+    /* await mongoose.connect('mongodb://localhost:27017/scoreboard') */
+    const { name, time, wordLength, guesses, uniqueLetters, createdAt } = req.body;
 
-// React fallback
-app.get('*', (req, res) => {
-    console.log('Sending frontend index.html');
-    res.sendFile(path.resolve(__dirname, '../frontend/dist/index.html'));
-}); */
-
+    const newScore = {
+        name,
+        time,
+        wordLength,
+        guesses,
+        uniqueLetters,
+        createdAt
+    };
+    console.log(newScore)
+    res.send(newScore)
+})
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

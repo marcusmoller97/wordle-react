@@ -1,16 +1,67 @@
-import { Typography, TextField, Button, Box } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Typography, TextField, Button, Box, Alert } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
+import { useNavigate } from 'react-router-dom';
 
 type SubmitFormProps = {
-    wordLength: number,
-    time: number,
-    guesses: number,
-    uniqueLetters: boolean
+  wordLength: number;
+  time: number;
+  guesses: number;
+  uniqueLetters: boolean;
 };
 
 export default function SubmitForm({ wordLength, time, guesses, uniqueLetters }: SubmitFormProps) {
+  const [name, setName] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
+
+  // Hantera timeout på ett korrekt sätt
+  useEffect(() => {
+    if (showAlert) {
+      const timeout = setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+
+      //remove timeout after finished
+      return () => clearTimeout(timeout);
+    }
+  }, [showAlert]);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    const scoreData = {
+      name,
+      time,
+      wordLength,
+      guesses,
+      uniqueLetters,
+      createdAt: new Date(),
+    };
+
+    try {
+      const response = await fetch('http://localhost:5080/api/scoreboard', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(scoreData),
+      });
+      if (!response.ok) {
+        throw new Error('Något gick fel');
+      }
+
+      setShowAlert(true);
+
+    } catch (error) {
+      console.error('Fel vid sparande av highscore: ', error);
+    }
+    console.log(scoreData);
+  };
+
   return (
     <Box
       component="form"
+      onSubmit={handleSubmit}
       sx={{
         width: '80%',
         height: '800px',
@@ -46,6 +97,8 @@ export default function SubmitForm({ wordLength, time, guesses, uniqueLetters }:
         Fyll i uppgifterna nedanför:
       </Typography>
       <TextField
+        value={name}
+        onChange={(e) => setName(e.target.value)}
         sx={{
           display: 'block',
           backgroundColor: 'white',
@@ -147,6 +200,21 @@ export default function SubmitForm({ wordLength, time, guesses, uniqueLetters }:
       >
         Spara
       </Button>
+      <Alert
+        sx={{
+          display: showAlert ? 'flex' : 'none',
+          alignItems: 'center',
+          justifyContent: 'center',
+          textAlign: 'center',
+          margin: '2rem auto',
+          width: 'fit-content',
+          padding: '1rem 2rem',
+        }}
+        icon={<CheckIcon fontSize="inherit" />}
+        severity="success"
+      >
+        Datan sparas till databasen!
+      </Alert>
     </Box>
   );
 }
