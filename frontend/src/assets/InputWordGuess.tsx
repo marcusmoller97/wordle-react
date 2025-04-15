@@ -59,7 +59,7 @@ export default function InputWordGuess({ word, uniqueLetters }: InputWordGuessPr
   // to handle input when typing
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const guess = e.target.value;
-    console.log(guess);
+
     if (guess.length > word.length || /[^a-zA-Z]/.test(guess)) {
       setShowAlert(true);
       setTimeout(() => {

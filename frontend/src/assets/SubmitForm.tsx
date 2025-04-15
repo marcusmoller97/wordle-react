@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Typography, TextField, Button, Box, Alert } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
-import { useNavigate } from 'react-router-dom';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
 type SubmitFormProps = {
   wordLength: number;
@@ -13,6 +13,7 @@ type SubmitFormProps = {
 export default function SubmitForm({ wordLength, time, guesses, uniqueLetters }: SubmitFormProps) {
   const [name, setName] = useState('');
   const [showAlert, setShowAlert] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   // Hantera timeout på ett korrekt sätt
   useEffect(() => {
@@ -27,8 +28,13 @@ export default function SubmitForm({ wordLength, time, guesses, uniqueLetters }:
   }, [showAlert]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+    event.preventDefault();
 
+    if (name == '') {
+      setShowError(true);
+      setTimeout(() => setShowError(false), 2000);
+      return;
+    }
     const scoreData = {
       name,
       time,
@@ -39,7 +45,7 @@ export default function SubmitForm({ wordLength, time, guesses, uniqueLetters }:
     };
 
     try {
-      const response = await fetch('http://localhost:5080/api/scoreboard', {
+      const response = await fetch('http://localhost:5080/highscore/send', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,11 +57,9 @@ export default function SubmitForm({ wordLength, time, guesses, uniqueLetters }:
       }
 
       setShowAlert(true);
-
     } catch (error) {
       console.error('Fel vid sparande av highscore: ', error);
     }
-    console.log(scoreData);
   };
 
   return (
@@ -214,6 +218,22 @@ export default function SubmitForm({ wordLength, time, guesses, uniqueLetters }:
         severity="success"
       >
         Datan sparas till databasen!
+      </Alert>
+      <Alert
+        className="alert"
+        sx={{
+          display: showError ? 'flex' : 'none',
+          alignItems: 'center',
+          justifyContent: 'center',
+          textAlign: 'center',
+          margin: '2rem auto',
+          width: 'fit-content',
+          padding: '1rem 2rem',
+        }}
+        icon={<ErrorOutlineIcon fontSize="inherit" />}
+        severity="error"
+      >
+        Du måste ange namn!
       </Alert>
     </Box>
   );

@@ -19,7 +19,7 @@ const highscoreSchema = new mongoose.Schema({
     },
     uniqueLetters: {
         type: Boolean,
-        required: String,
+        required: true,
     },
     createdAt: { type: Date, default: Date.now },
 });

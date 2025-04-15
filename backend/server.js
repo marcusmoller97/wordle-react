@@ -38,7 +38,7 @@ app.get('/wordlist/:wordLength/:uniqueLetters', async (req, res) => {
         const response = await fetch('https://raw.githubusercontent.com/dwyl/english-words/refs/heads/master/words_dictionary.json');
         const wordList = Object.keys(await response.json());
         const word = chooseWord(wordList, length, uniqueLetters);
-        console.log(word)
+        console.log(word);
         res.status(200).send({ word });
     } catch (error) {
         console.error('Fel vid hämtning av ordlistan: ', error);
@@ -46,21 +46,21 @@ app.get('/wordlist/:wordLength/:uniqueLetters', async (req, res) => {
     }
 });
 
-app.post('/api/scoreboard', async (req, res) => {
-    /* await mongoose.connect('mongodb://localhost:27017/scoreboard') */
+app.post('/highscore/send', async (req, res) => {
     const { name, time, wordLength, guesses, uniqueLetters, createdAt } = req.body;
 
-    const newScore = {
+    const newScore = new Highscore({
         name,
         time,
         wordLength,
         guesses,
         uniqueLetters,
         createdAt
-    };
-    console.log(newScore)
-    res.send(newScore)
-})
+    });
+
+    await newScore.save();
+    res.status(201).json({ message: 'Highscore sparad!' });
+});
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
