@@ -1,13 +1,11 @@
 import express from 'express';
 import cors from 'cors';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
 import router from './routes/SendGameDataToDB.js';
 import chooseWord from '../frontend/src/utilis/chooseWord.js';
-import Highscore from './modals/highScore.js';
 import mongoose from 'mongoose';
-
+import dotenv from 'dotenv';
+dotenv.config();
 // setup express
 const app = express();
 const PORT = process.env.PORT || 5080;
@@ -27,14 +25,17 @@ app.use(express.json());
 // enable cors
 const corsOptions = {
     origin: ['http://localhost:5173'],
-    /* methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type'], */
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
 };
 
 app.use(cors(corsOptions));
 
 // paths
 app
+    .get('/home', (req, res) => {
+        res.send('<h1>Hej</h1>');
+    })
     .get('/wordlist/:wordLength/:uniqueLetters', async (req, res) => {
         const length = Number(req.params.wordLength);
         const uniqueLetters = (req.params.uniqueLetters === 'true' ? true : false);
