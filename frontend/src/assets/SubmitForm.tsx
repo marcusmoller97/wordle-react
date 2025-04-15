@@ -45,7 +45,7 @@ export default function SubmitForm({ wordLength, time, guesses, uniqueLetters }:
     };
 
     try {
-      const response = await fetch('http://localhost:5080/highscore/send', {
+      const response = await fetch('http://localhost:5080/api/highscore/send', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
