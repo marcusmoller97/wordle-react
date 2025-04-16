@@ -18,9 +18,7 @@ export default function GuessWord({ wordObject }: Props) {
 
     async function newWord() {
       try {
-        const response = await axios.get(
-          `http://localhost:5080/wordlist/${wordObject.charAmount}/${wordObject.uniqueLetters}`
-        );
+        const response = await axios.get(`http://localhost:5080/wordlist?wordLength=5&uniqueLetters=true`);
 
         const word = response.data.word;
 

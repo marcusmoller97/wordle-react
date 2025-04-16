@@ -12,9 +12,9 @@ import MenuItem from '@mui/material/MenuItem';
 import { Link } from 'react-router-dom';
 
 const pages = [
-  { name: 'Worlde', path: '/home' },
-  { name: 'Highscore', path: '/highscore' },
-  { name: 'About', path: '/about' },
+  { name: 'Worlde', path: '/home', react: true },
+  { name: 'Highscore', path: '/highscore', react: false },
+  { name: 'About', path: '/about', react: true },
 ];
 
 function ResponsiveAppBar() {
@@ -111,11 +111,22 @@ function ResponsiveAppBar() {
             </Menu>
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button key={page.name} component={Link} to={page.path} sx={{ my: 2, color: 'white', display: 'block' }}>
-                {page.name}
-              </Button>
-            ))}
+            {pages.map((page) =>
+              page.react ? (
+                <Button
+                  key={page.name}
+                  component={Link}
+                  to={page.path}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                  {page.name}
+                </Button>
+              ) : (
+                <Button key={page.name} component="a" href={page.path} sx={{ my: 2, color: 'white', display: 'block' }}>
+                  {page.name}
+                </Button>
+              )
+            )}
           </Box>
         </Toolbar>
       </Container>

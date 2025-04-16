@@ -1,19 +1,26 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 import Highscore from './modals/highScore.js';
-
 import router from './routes/SendGameDataToDB.js';
 import chooseWord from '../frontend/src/utilis/chooseWord.js';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 dotenv.config();
+
 // setup express
 const app = express();
 const PORT = process.env.PORT || 5080;
 
+// to use __dirname with ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // setup to ejs
 app.set('view engine', 'ejs');
+app.set("views", path.join(__dirname, "views"));
 
 // connect to database
 mongoose.connect(process.env.MONGODB_URL)
@@ -64,12 +71,9 @@ app
             `);
         }
     })
-    .get('/home', (req, res) => {
-        res.send('<h1>Hej</h1>');
-    })
-    .get('/wordlist/:wordLength/:uniqueLetters', async (req, res) => {
-        const length = Number(req.params.wordLength);
-        const uniqueLetters = (req.params.uniqueLetters === 'true' ? true : false);
+    .get('/wordlist', async (req, res) => {
+        const length = Number(req.query.wordLength);
+        const uniqueLetters = (req.query.uniqueLetters === 'true' ? true : false);
         try {
             const response = await fetch('https://raw.githubusercontent.com/dwyl/english-words/refs/heads/master/words_dictionary.json');
             const wordList = Object.keys(await response.json());
@@ -82,6 +86,17 @@ app
         }
     })
     .use('/api', router);
+
+// Serve static files
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// React SPA routes
+const spaRoutes = ['/home', '/about'];
+app.get(spaRoutes, (_req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+});
+
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
