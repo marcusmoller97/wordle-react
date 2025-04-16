@@ -19,7 +19,7 @@ export default function Row({ guessLength, currentGuess, feedback }: rowProps) {
       case 'misplaced':
         return '#FFBF00';
       case 'incorrect':
-        return 'grey';
+        return 'red';
       default:
         return 'primary.main';
     }

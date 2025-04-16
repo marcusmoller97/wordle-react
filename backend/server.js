@@ -46,13 +46,12 @@ app
         try {
             const total = await Highscore.countDocuments();
             const highscores = await Highscore.find()
-                .sort({ score: -1 }) // sortera efter t.ex. score eller tid
+                .sort({ wordLength: -1 }) // sorting on longest word
                 .skip((page - 1) * limit)
                 .limit(limit);
 
             const totalPages = Math.ceil(total / limit);
 
-            console.log(highscores);
             res.render('highscore', {
                 highscores,
                 currentPage: page,

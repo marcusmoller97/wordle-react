@@ -23,6 +23,7 @@ export default function InputWordGuess({ word, uniqueLetters }: InputWordGuessPr
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(true);
   const [feedbackList, setFeedbackList] = useState<FeedbackItem[] | null>(null);
+  const [shortGuessAlert, setShortGuessAlert] = useState(false);
 
   // for timing the game
   useEffect(() => {
@@ -37,6 +38,12 @@ export default function InputWordGuess({ word, uniqueLetters }: InputWordGuessPr
   // handle form when submitted
   const controllAnswer = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
+    if (guessWord.length !== word.length) {
+      console.log('fel');
+      setShortGuessAlert(true);
+      setTimeout(() => setShortGuessAlert(false), 800);
+      return;
+    }
 
     const getGuessFeedback = getFeedback(guessWord, word);
     setFeedbackList(getGuessFeedback);
@@ -80,7 +87,7 @@ export default function InputWordGuess({ word, uniqueLetters }: InputWordGuessPr
           onSubmit={controllAnswer}
           sx={{
             width: '80%',
-            height: '400px',
+            height: '600px',
             margin: '2rem auto 2rem auto',
             padding: 2,
             borderRadius: 10,
@@ -89,6 +96,22 @@ export default function InputWordGuess({ word, uniqueLetters }: InputWordGuessPr
           }}
         >
           <Row guessLength={word.length} currentGuess={guessWord} feedback={feedbackList} />
+          <Alert
+            className="alert"
+            sx={{
+              display: shortGuessAlert ? 'flex' : 'none',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              margin: '2rem auto',
+              width: 'fit-content',
+              padding: '1rem 2rem',
+            }}
+            icon={<ErrorOutlineIcon fontSize="inherit" />}
+            severity="error"
+          >
+            Din gissning är för kort. Måste vara {word.length} tecken lång.
+          </Alert>
           <Alert
             className="alert"
             sx={{
