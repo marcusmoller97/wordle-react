@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Highscores</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" , defer></script>
+
+  <!-- Custom styles to mimic MUI -->
+  <style>
+    .mui-navbar {
+      background-color: #1976d2;
+    }
+
+    .mui-w-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      border: 1px solid white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Source Code Pro', monospace;
+      font-weight: 700;
+      background-color: green;
+      color: white;
+      margin-right: 8px;
+    }
+
+    .mui-wordle-text {
+      font-family: 'Source Code Pro', monospace;
+      font-weight: 700;
+      letter-spacing: 0.3rem;
+      color: white;
+    }
+
+    .navbar-dark .navbar-nav .nav-link {
+      color: #ffffff !important;
+      opacity: 1 !important;
+    }
+
+    @media (max-width: 991px) {
+      .navbar-toggler {
+        margin-left: auto;
+      }
+
+      .navbar-collapse {
+        justify-content: flex-end;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark mui-navbar">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center" href="/home">
+        <span class="mui-w-icon">W</span>
+        <span class="mui-wordle-text">WORDLE</span>
+      </a>
+
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarLinks"
+        aria-controls="navbarLinks"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarLinks">
+        <ul class="navbar-nav ms-3 mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="/home">Wordle</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/highscore">Highscore</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/about">About</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container w-75 pt-5 pb-3 mt-5 mx-auto bg-primary">
+    <h1 class="text-center text-white pb-2" style="font-family: monospace">Highscore</h1>
+    <% if (highscores.length === 0){ %>
+        <h2 class="text-center text-white pb-2" style="font-family: monospace">Ingen sparad data</h2>
+    <% } else{ %>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Namn</th>
+              <th scope="col">Spelad tid</th>
+              <th scope="col">Ordlängd</th>
+              <th scope="col">Antal gissningar</th>
+              <th scope="col">Unika ord</th>
+              <th scope="col">Tidpunkt vid spelande</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% highscores.forEach(score => { %>
+                <tr>
+                  <td scope="row"><%= score.name %></td>
+                  <td><%= score.time %> sekunder</td>
+                  <td><%= score.wordLength %></td>
+                  <td><%= score.guesses %></td>
+                  <td><%= score.uniqueLetters ? 'Ja' : 'Nej' %></td>
+                  <td><%= new Date(score.createdAt).toLocaleString('sv-SE', { timeZone: 'Europe/Stockholm' }) %></td>
+                </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <nav class="pt-4" aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
+            <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+              <a class="page-link" href="?page=<%= currentPage - 1%>" tabindex="-1">Previous</a>
+            </li>
+            <% for(let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+              <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+            </li>
+            <% } %>
+            <li class="page-item <%=currentPage === totalPages ? 'disabled' : ''%>">
+              <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+            </li>
+          </ul>
+        </nav>
+    <% } %>
+  </div>
+  <footer
+    class="bg-primary text-white text-center fixed-bottom d-flex align-items-end justify-content-center"
+    style="height: 100px"
+  >
+    <p class="mb-2" style="font-family: monospace; font-style: italic; font-size: 1rem">
+      © 2025 Wordle by Marcus • All Rights Reserved
+    </p>
+  </footer>
+</body>

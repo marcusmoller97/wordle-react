@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 
+import Highscore from './modals/highScore.js';
+
 import router from './routes/SendGameDataToDB.js';
 import chooseWord from '../frontend/src/utilis/chooseWord.js';
 import mongoose from 'mongoose';
@@ -9,6 +11,9 @@ dotenv.config();
 // setup express
 const app = express();
 const PORT = process.env.PORT || 5080;
+
+// setup to ejs
+app.set('view engine', 'ejs');
 
 // connect to database
 mongoose.connect(process.env.MONGODB_URL)
@@ -22,7 +27,7 @@ mongoose.connect(process.env.MONGODB_URL)
 // Json data middleware
 app.use(express.json());
 
-// enable cors
+// enable cors middleware corse
 const corsOptions = {
     origin: ['http://localhost:5173'],
     methods: ['GET', 'POST'],
@@ -31,8 +36,35 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+
 // paths
 app
+    .get('/highscore', async (req, res) => {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+
+        try {
+            const total = await Highscore.countDocuments();
+            const highscores = await Highscore.find()
+                .sort({ score: -1 }) // sortera efter t.ex. score eller tid
+                .skip((page - 1) * limit)
+                .limit(limit);
+
+            const totalPages = Math.ceil(total / limit);
+
+            console.log(highscores);
+            res.render('highscore', {
+                highscores,
+                currentPage: page,
+                totalPages
+            });
+        } catch (error) {
+            console.error('Error fetching highscores:', error);
+            res.status(500).send(`
+                <h1 style="text-align: center;">Error fetching from database</h1>
+            `);
+        }
+    })
     .get('/home', (req, res) => {
         res.send('<h1>Hej</h1>');
     })
